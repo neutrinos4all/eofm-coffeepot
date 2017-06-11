@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://fhsl.eng.buffalo.edu/EOFM/EOFMC.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<eofms>
+    <humanoperator name="pDrinker">
+        <inputvariable name="iFilter" basictype="BOOLEAN"/>
+        <inputvariable name="iGrounds" basictype="BOOLEAN"/>
+        <inputvariable name="iWater" basictype="BOOLEAN"/>
+        <inputvariable name="iCarafe" basictype="BOOLEAN"/>
+        <inputvariable name="iBrewedCoffee" basictype="BOOLEAN"/>
+        
+        <humanaction name="hPutFilter" behavior="autoreset"/>
+        <humanaction name="hPutGrounds" behavior="autoreset"/>
+        <humanaction name="hPutWater" behavior="autoreset"/>
+        <humanaction name="hPutCarafe" behavior="autoreset"/>
+        <humanaction name="hStartCoffeeMaker" behavior="autoreset"/>
+        
+        <eofm>
+            <activity name="aPrepareSolids">
+                <precondition>NOT iFilter &amp; NOT iGrounds</precondition>
+                <completioncondition>iFilter &amp; iGrounds</completioncondition>
+                <decomposition operator="ord">
+                    <activity name="aDeployFilter">
+                        <decomposition operator="ord">
+                            <action humanaction="hPutFilter"></action>
+                        </decomposition>
+                    </activity>
+                    <activity name="aDeployGrounds">
+                        <decomposition operator="ord">
+                            <action humanaction="hPutGrounds"></action>
+                        </decomposition>
+                    </activity>
+                </decomposition>
+            </activity>
+        </eofm>
+        
+        <eofm>
+            <activity name="aPrepareLiquids">
+                <precondition>NOT iWater &amp; NOT iCarafe</precondition>
+                <completioncondition>iWater &amp; iCarafe</completioncondition>
+                <decomposition operator="ord">
+                    <activity name="aPourWater">
+                        <decomposition operator="ord">
+                            <action humanaction="hPutWater"></action>
+                        </decomposition>
+                    </activity>
+                    <activity name="aReplaceCarafe">
+                        <decomposition operator="ord">
+                            <action humanaction="hPutCarafe"></action>
+                        </decomposition>
+                    </activity>
+                </decomposition>
+            </activity>
+        </eofm>
+        
+        <eofm>
+            <activity name="aBrewCoffee">
+                <precondition>NOT iBrewedCoffee &amp; iFilter &amp; iGrounds &amp; iWater &amp; iCarafe</precondition>
+                <completioncondition>iBrewedCoffee</completioncondition>
+                <decomposition>
+                    <action humanaction="hStartCoffeeMaker"></action>
+                </decomposition>
+            </activity>
+        </eofm>
+    </humanoperator>
+</eofms>
+
+<!--
+    notes: things you can do = put in water, put in coffee filter, put in coffee grounds, put in coffee carafe, turn on pot, brew coffee
+    humanaction: name="pressStartButton" behavior=toggle (turn it on to start brewing coffee and leave it on, then turn it off to stop heating the warming pad)
+-->
